@@ -45,37 +45,51 @@ See `PLAN.md` for the modeling approach: energy-domain heuristic baseline → sy
 training from SA backgrounds + HearMyShip/ONC passages → gradient-boosted regressor →
 iterate within the 2/day submission budget.
 
-## What is built (2026-11-01)
+## External vessel data (declared per challenge rules)
 
-Pipeline in `src/` (reproducible, seeds fixed):
-- `src/common.py` — dB↔energy conversion, test loading (NaN = missing, never
-  filled), Stage B analytic share, diagnostic detection score, submission checks.
-- `src/baseline_analytic.py` — Stage B: per-window/per-band background = 10th
-  percentile over minutes in energy domain; share = excess/total energy.
-  → `submissions/baseline_analytic.csv`
-- `src/make_synthetic.py` — Stage C data: contiguous 15-min background windows
-  from SA parquets (per site/recorder, gaps ≤ 180 s) + **parametric** vessel
-  templates (small-craft / large-ship spectral bumps + passage envelopes) mixed
-  in the energy domain at exact ground-truth shares (25% zeros).
-  → `data/processed/synthetic_{train,val}.parquet`
-- `src/train_lgbm.py` — 30 energy-domain features (analytic share, per-band
-  excess fractions, transient stats, excess spectral centroid) → LightGBM
-  regressor. Validation on **held-out sites** (Fish Hoek, Sea Point).
-  → `models/lgbm_synth.txt`, `submissions/synth_lgbm.csv`
+**HearMyShip** — "A Database of Underwater Radiated Noise from Small Vessels in
+the Coastal Area" (Shipton, Obradović, Ferreira, Mišković, Bulat, Cukrov,
+Diamant; recorded in the Šibenik canal, Croatia; open access).
+- Source URL: https://hearmyship.fer.hr/ (accessed 2026-11-01)
+- Paper record: https://repozitorij.fer.unizg.hr/islandora/object/fer:12025
+  (urn:nbn:hr:168:030404)
+- What we used: 322 twenty-second 48 kHz mono WAV passages at closest point of
+  approach (stratified: Motorboat/Yacht/Tour boat/Ferry/Fishing/Cargo/Aux;
+  Sailboat clip URLs on the site were stale → excluded from the WAV pool) +
+  published per-vessel third-octave CPA spectra for 1,100 vessels (30 bands,
+  31.5 Hz–20 kHz, mapped onto our 25 bands).
+- Preprocessing (`src/vessel_signatures.py`): per-second third-octave band
+  energies via rfft on 1-s Hann windows (25 challenge bands, 31.6 Hz–7.94 kHz);
+  per-band ambient floor (5th percentile over the clip) subtracted so the
+  signature is the *vessel-added* component; signatures normalised and rescaled
+  to exact target shares in the energy domain at mixing time (hydrophone
+  calibration differences cancel). Licence: open access per the repository
+  record; cite Shipton et al. when publishing.
+- ONC (Ocean Networks Canada, data.oceannetworks.ca) was **not** used — it
+  requires an API token/account; HearMyShip alone was sufficient for this
+  iteration.
 
-Validation (held-out sites, 543 windows): **RMSE 0.1374 → score 1−RMSE = 0.8626**.
-Stage B analytic baseline on the same val: RMSE 0.3585 (score 0.6415) — the
-heuristic over-attributes natural background variation to vessels. Model bias:
-slight over-prediction at share≈0 (+0.10), slight under-prediction at high
-shares (−0.07). Top features: peak/median minute-energy ratio, high-band
-(6–8 kHz) excess fractions, transient fraction.
+## What is built (2026-11-01, real-vessel iteration)
 
-Caveats: vessel templates are parametric, not real HearMyShip/ONC recordings —
-real-test performance will be lower than synthetic val. Next steps: replace
-templates with real passages, tune the share sampling to match the test prior,
-ensemble seeds.
+Replaced the parametric vessel templates with real HearMyShip passages:
+- `src/vessel_signatures.py` — WAV → (20 s × 25 band) energy signatures
+  → `data/external/vessel_signatures.npz` (322 clips); CPA spectra →
+  `data/external/vessel_cpa_templates.npz` (1,100 templates).
+- `src/make_synthetic.py` — now samples real clips (65%) / CPA templates
+  (35%); clips embedded as 20-s band totals in 1–2 minute bins, templates as
+  1–3 min raised-cosine passages; exact-share energy-domain mixing; vessel
+  clips split **disjointly** between train/val (no passage leakage).
+- `src/train_lgbm.py` — same 30 features; new flags `--out-name`,
+  `--model-name`. → `models/lgbm_real.txt`,
+  `submissions/synth_lgbm_real.csv`
 
-## Blockers (waiting on user)
+Validation (held-out **sites** Fish Hoek + Sea Point **and** held-out vessel
+clips, 543 windows): **RMSE 0.0807 → score 1−RMSE = 0.9193**
+(previous parametric: 0.8626). Bias now balanced: +0.034 at share≈0, −0.034 at
+high shares. Top features: transient_frac, peak_median_ratio, excess_centroid,
+high-band excess fractions. Test prediction prior: mean share 0.26, median
+0.21 — plausible vs the over-attributing analytic baseline (0.72).
 
-1. Repo destination: GitHub? What name? (local scaffold will be pushed/renamed accordingly)
-2. Nothing submitted to Zindi yet — first submission needs a go-ahead.
+Caveats: synthetic val still overstates real-test performance (our passages
+≠ organisers' passages; SA backgrounds differ from test backgrounds). Next:
+seed ensemble, share-prior tuning, error analysis by vessel category.

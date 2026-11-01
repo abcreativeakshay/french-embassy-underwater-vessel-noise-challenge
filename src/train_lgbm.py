@@ -91,6 +91,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--rounds', type=int, default=600)
     ap.add_argument('--seed', type=int, default=SEED)
+    ap.add_argument('--out-name', type=str, default='synth_lgbm.csv',
+                    help='submission filename in submissions/')
+    ap.add_argument('--model-name', type=str, default='lgbm_synth.txt',
+                    help='model filename in models/')
     args = ap.parse_args()
 
     print('loading synthetic data...', flush=True)
@@ -128,7 +132,7 @@ def main():
 
     models_dir = ROOT / 'models'
     models_dir.mkdir(exist_ok=True)
-    model.save_model(models_dir / 'lgbm_synth.txt')
+    model.save_model(models_dir / args.model_name)
 
     # predict the real test set
     ids, A_te, m_te = load_test(ROOT / 'data' / 'Test.csv')
@@ -138,7 +142,7 @@ def main():
     sub = pd.DataFrame({'ID': ids, 'share_added_vessel': share,
                         'score_added_vessel': score})
     check_submission(sub, len(ids))
-    out = ROOT / 'submissions' / 'synth_lgbm.csv'
+    out = ROOT / 'submissions' / args.out_name
     sub.to_csv(out, index=False)
     print(f'wrote {out}')
     print(f'test share: mean={share.mean():.4f} p50={np.median(share):.4f} '
