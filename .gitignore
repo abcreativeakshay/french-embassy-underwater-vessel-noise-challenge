@@ -1,0 +1,4 @@
+# Raw vessel audio is too large for git; the derived signatures are committed.
+data/external/hearmyship/
+__pycache__/
+*.pyc

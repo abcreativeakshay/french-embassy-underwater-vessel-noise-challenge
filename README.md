@@ -93,3 +93,33 @@ high-band excess fractions. Test prediction prior: mean share 0.26, median
 Caveats: synthetic val still overstates real-test performance (our passages
 ≠ organisers' passages; SA backgrounds differ from test backgrounds). Next:
 seed ensemble, share-prior tuning, error analysis by vessel category.
+
+## Ensemble + prior-tuning iteration (2026-11-01, for tomorrow's submissions)
+
+Seed ensembles over the real-vessel synthetic data (5 LightGBM seeds
+7/11/13/17/19, 600 rounds, predictions averaged):
+
+**`submissions/ensemble_v1.csv`** — plain 5-seed ensemble on the original
+synthetic set (25% zeros, U(0.03, 0.85) share prior).
+Val (held-out sites + held-out clips, n=543): RMSE 0.0812 → **1−RMSE 0.9188**.
+Per-seed RMSE 0.0807–0.0836. Bias: +0.035 at share≈0, −0.037 at high shares.
+
+**`submissions/ensemble_v2.csv`** — alternative bet: retuned share prior
+(30% zeros, U(0.02, 0.75) → prior mean 0.27, closer to the observed
+test-prediction mean 0.26; same seed so backgrounds/vessels are identical,
+only shares differ) + 5-seed ensemble + **isotonic calibration fit on
+validation predictions only** (never on test).
+Val: uncalibrated RMSE 0.0806 → 0.9194; calibrated RMSE **0.0759 → 1−RMSE
+0.9241**. Post-calibration bias: +0.019 at 0, −0.045 at high shares.
+
+The two submissions are correlated (r=0.97) but differ (mean |Δ|=0.036,
+max |Δ|=0.21) — genuine alternative bets. v2's calibration gain is
+validation-measured and may partially attenuate on real test data.
+
+New/changed code:
+- `src/train_ensemble.py` — K-seed training, prediction averaging,
+  `--calibrate {none,isotonic,affine}` (validation-fit), `--data-suffix`.
+- `src/make_synthetic.py` — `--zero-frac`, `--share-lo`, `--share-hi`,
+  `--out-suffix` flags for prior experiments.
+- `src/train_lgbm.py` — `load_synthetic()` accepts a data suffix.
+- Models: `models/ens_v1_s*.txt`, `models/ens_v2_s*.txt` (10 files, ~1.8 MB each).

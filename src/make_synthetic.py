@@ -146,18 +146,25 @@ def mix_window(bg_dB, V_shape, share):
     return mixed_dB.astype(np.float32), float(share)
 
 
-def sample_share(rng):
-    if rng.random() < 0.25:
+def sample_share(rng, zero_frac=0.25, lo=0.03, hi=0.85):
+    """Ground-truth share prior for synthetic windows.
+
+    Defaults (v1): 25% exact zeros, rest uniform(0.03, 0.85) -> mean ~0.33.
+    v2 (prior-tuned to the observed test-prediction distribution, mean ~0.26):
+    30% zeros, rest uniform(0.02, 0.75) -> mean ~0.27.
+    """
+    if rng.random() < zero_frac:
         return 0.0
-    return float(rng.uniform(0.03, 0.85))
+    return float(rng.uniform(lo, hi))
 
 
 # ------------------------------------------------------------------ main
-def build_split(windows, pool, rng, split_name):
+def build_split(windows, pool, rng, split_name,
+                zero_frac=0.25, share_lo=0.03, share_hi=0.85):
     rows = []
     for i, w in enumerate(windows):
         V, vtype, k = pool.sample()
-        s = sample_share(rng)
+        s = sample_share(rng, zero_frac, share_lo, share_hi)
         mixed, s = mix_window(w['bg_dB'], V, s)
         rows.append({'window_id': f'{split_name}_{i:05d}',
                      'site': w['site'], 'share': s,
@@ -183,6 +190,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--n-per-site', type=int, default=750)
     ap.add_argument('--seed', type=int, default=SEED)
+    ap.add_argument('--zero-frac', type=float, default=0.25)
+    ap.add_argument('--share-lo', type=float, default=0.03)
+    ap.add_argument('--share-hi', type=float, default=0.85)
+    ap.add_argument('--out-suffix', type=str, default='',
+                    help='suffix for output filenames, e.g. _v2')
     args = ap.parse_args()
     rng = np.random.default_rng(args.seed)
 
@@ -196,12 +208,20 @@ def main():
 
     out = ROOT / 'data' / 'processed'
     out.mkdir(parents=True, exist_ok=True)
-    pq.write_table(build_split(train_w, pool_tr, rng, 'tr'),
-                   out / 'synthetic_train.parquet')
-    pq.write_table(build_split(val_w, pool_va, rng, 'va'),
-                   out / 'synthetic_val.parquet')
-    print('wrote', out / 'synthetic_train.parquet', 'and',
-          out / 'synthetic_val.parquet')
+    sfx = args.out_suffix
+    pq.write_table(build_split(train_w, pool_tr, rng, 'tr',
+                               args.zero_frac, args.share_lo, args.share_hi),
+                   out / f'synthetic_train{sfx}.parquet')
+    pq.write_table(build_split(val_w, pool_va, rng, 'va',
+                               args.zero_frac, args.share_lo, args.share_hi),
+                   out / f'synthetic_val{sfx}.parquet')
+    print('wrote', out / f'synthetic_train{sfx}.parquet', 'and',
+          out / f'synthetic_val{sfx}.parquet')
+    # report the realized prior
+    t = pq.read_table(out / f'synthetic_train{sfx}.parquet',
+                      columns=['share']).to_pandas()['share'].to_numpy()
+    print(f'prior: mean={t.mean():.4f} median={np.median(t):.4f} '
+          f'frac_zero={(t == 0).mean():.3f} frac<0.1={(t < 0.1).mean():.3f}')
 
 
 if __name__ == '__main__':

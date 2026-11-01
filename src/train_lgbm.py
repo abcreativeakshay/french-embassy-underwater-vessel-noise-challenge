@@ -77,8 +77,8 @@ def featurize(A, mask):
     return np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
 
 
-def load_synthetic(name):
-    t = pq.read_table(ROOT / 'data' / 'processed' / f'synthetic_{name}.parquet')
+def load_synthetic(name, suffix=''):
+    t = pq.read_table(ROOT / 'data' / 'processed' / f'synthetic_{name}{suffix}.parquet')
     df = t.to_pandas()
     n = len(df)
     A = np.stack(df['mixed_dB'].to_numpy()).reshape(n, N_MIN, N_BAND)
