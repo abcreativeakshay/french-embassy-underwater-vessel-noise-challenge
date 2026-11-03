@@ -1,0 +1,5 @@
+variantA_5seed_val_1rmse=0.9188
+variantA_10seed_val_1rmse=0.9187
+variantB_honest_half2_uncal=0.9138
+variantB_honest_half2_cal=0.9131
+shipped_calibrated=False
