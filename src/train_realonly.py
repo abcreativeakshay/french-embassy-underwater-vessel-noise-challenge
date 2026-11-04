@@ -94,6 +94,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--rounds', type=int, default=600)
     ap.add_argument('--seeds', type=int, nargs='+', default=DEFAULT_SEEDS)
+    ap.add_argument('--out', type=str, default='nov4_slot1_realonly.csv',
+                    help='output CSV name in submissions/')
     ap.add_argument('--smoke', action='store_true',
                     help='2 rounds on 1 seed, prints diagnostics, writes nothing')
     args = ap.parse_args()
@@ -161,13 +163,13 @@ def main():
     sub = pd.DataFrame({'ID': ids, 'share_added_vessel': share,
                         'score_added_vessel': score})
     check_submission(sub, len(ids))
-    out = ROOT / 'submissions' / 'nov4_slot1_realonly.csv'
+    out = ROOT / 'submissions' / args.out
     sub.to_csv(out, index=False)
     print(f'wrote {out}', flush=True)
     print(f'test share: mean={share.mean():.4f} p50={np.median(share):.4f} '
           f'max={share.max():.4f} frac<0.05={(share < 0.05).mean():.3f}')
 
-    res = ROOT / 'submissions' / 'nov4_slot1_realonly_results.txt'
+    res = ROOT / 'submissions' / (args.out.replace('.csv', '_results.txt'))
     with open(res, 'w') as f:
         f.write(f'n_train_realonly={len(y_tr)}\n')
         f.write(f'n_val_realonly={len(y_va)}\n')
