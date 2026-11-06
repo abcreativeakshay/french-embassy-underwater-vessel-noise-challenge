@@ -1,0 +1,54 @@
+loading hms_clip data...
+train (5797, 15, 25)  val (378, 15, 25)
+featurizing v3 (train)...
+featurizing v3 (val)...
+--- standalone v3 feature scores on val ---
+  unmix_share              1-RMSE=0.8368 FH=0.8014 SP=0.8945 bias=+0.0472
+  unmix_share_clip         1-RMSE=0.8363 FH=0.8015 SP=0.8924 bias=+0.0386
+  unmix_share_cpa          1-RMSE=0.8226 FH=0.7758 SP=0.9065 bias=-0.0201
+  unmix_share_perminute    1-RMSE=0.6988 FH=0.7063 SP=0.6899 bias=-0.0980
+  unmix_excess_share       1-RMSE=0.7804 FH=0.7580 SP=0.8110 bias=+0.1425
+  ts_analytic_share        1-RMSE=0.6845 FH=0.6582 SP=0.7196 bias=+0.2196
+  f30_analytic_share       1-RMSE=0.6201 FH=0.6200 SP=0.6202 bias=+0.3042
+featurized test (1500, 68)
+--- seed 7 (600 rounds) ---
+  seed 7 v3 val 1-RMSE=0.9261
+--- seed 11 (600 rounds) ---
+  seed 11 v3 val 1-RMSE=0.9284
+--- seed 13 (600 rounds) ---
+  seed 13 v3 val 1-RMSE=0.9259
+--- seed 17 (600 rounds) ---
+  seed 17 v3 val 1-RMSE=0.9266
+--- seed 19 (600 rounds) ---
+  seed 19 v3 val 1-RMSE=0.9290
+--- seed 23 (600 rounds) ---
+  seed 23 v3 val 1-RMSE=0.9260
+--- seed 29 (600 rounds) ---
+  seed 29 v3 val 1-RMSE=0.9254
+--- seed 31 (600 rounds) ---
+  seed 31 v3 val 1-RMSE=0.9269
+--- seed 37 (600 rounds) ---
+  seed 37 v3 val 1-RMSE=0.9275
+--- seed 41 (600 rounds) ---
+  seed 41 v3 val 1-RMSE=0.9258
+ENSEMBLE v3 val 1-RMSE=0.9277  (baseline 0.9229)
+  09_Fish_Hoek: n=207 1-RMSE=0.9141 mean_abs_err=0.0542
+  10_Sea_Point: n=171 1-RMSE=0.9488 mean_abs_err=0.0244
+  share[0.00,0.00): n=  98 rmse=0.0785 bias=+0.0321
+  share[0.00,0.10): n=  20 rmse=0.0433 bias=+0.0002
+  share[0.10,0.30): n=  68 rmse=0.0785 bias=+0.0065
+  share[0.30,0.60): n=  93 rmse=0.0640 bias=-0.0162
+  share[0.60,1.00): n=  99 rmse=0.0733 bias=-0.0308
+GATE (v3 val >= 0.9229): PASS
+val: real-only ens=0.9229  v1 ens=0.9195  current-best (ro+v1)/2=0.9225
+  blend w_v3=0.5: val 1-RMSE=0.9281 FH=0.9152 SP=0.9478
+  blend w_v3=0.7: val 1-RMSE=0.9287 FH=0.9156 SP=0.9488
+  blend w_v3=0.3: val 1-RMSE=0.9265 FH=0.9137 SP=0.9460
+BLEND GATE (50/50 val >= 0.9229): PASS
+  unmixing+best 50/50: val 1-RMSE=0.9006
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_v3.csv
+test share: mean=0.2558 p50=0.2012 max=0.7895 frac<0.05=0.179
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_v3_blend.csv
+blend test share: mean=0.2568 corr vs best=0.9614 mean|diff|=0.0404
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_v3_results.txt
+done

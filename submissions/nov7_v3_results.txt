@@ -1,0 +1,7 @@
+ensemble_v3_val_1rmse=0.9277
+blend50_val_1rmse=0.9281
+baseline_hms_val_1rmse=0.9229
+gate_pass=True
+blend_gate_pass=True
+features=68 (v3: two-stage bg + NNLS unmixing)
+calibration=none
