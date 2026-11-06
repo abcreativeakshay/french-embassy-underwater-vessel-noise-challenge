@@ -65,9 +65,31 @@ Diamant; recorded in the Šibenik canal, Croatia; open access).
   to exact target shares in the energy domain at mixing time (hydrophone
   calibration differences cancel). Licence: open access per the repository
   record; cite Shipton et al. when publishing.
-- ONC (Ocean Networks Canada, data.oceannetworks.ca) was **not** used — it
-  requires an API token/account; HearMyShip alone was sufficient for this
+- ONC (Ocean Networks Canada, data.oceannetworks.ca) was **not** used directly —
+  it requires an API token/account; HearMyShip alone was sufficient for this
   iteration.
+
+**VTUAD (rebuilt) v1.3.3** — "VTUAD: An AIS-Auto-Labeled Vessel-Type
+Underwater Acoustic Dataset Reconstructed from Ocean Networks Canada
+Archives" (Yuan et al.; 525 labeled single-vessel scenario clips, ~56 h of
+32 kHz mono WAV, ONC hydrophone ICLISTENAF2523, Strait of Georgia, May
+2016–May 2017; CC BY 4.0). **TO BE DECLARED on the competition page before
+any submission built from it is uploaded** (competitors already declare it).
+- Source URL: https://zenodo.org/records/23773305 (DOI 10.5281/zenodo.23773305,
+  accessed 2026-11-06)
+- What we used: the strict-interval vessel archive
+  (`vtuad_strict_wav_vessel.zip`, 509 clips re-cut to exact AIS-qualified
+  intervals); large-vessel classes cargo (97 clips, 112–348 m), tanker (5,
+  144–182 m), passengership (71, 14–220 m), dredger (8, 124 m), other (40,
+  up to 290 m) — 221 large-vessel clips; tug (188), fishing, pleasurecraft
+  etc. available in the same archive.
+- Preprocessing (`src/vtuad_signatures.py`): same method as HearMyShip —
+  per-second third-octave band energies (25 challenge bands), per-band
+  ambient floor (5th percentile over the clip) subtracted; the signature is
+  the LOUDEST 60-s window of each clip (closest to CPA, the analogue of
+  HearMyShip's 20-s CPA clip), embedded as band totals in 1–2 minutes by
+  `src/make_synthetic_vtuad.py`; normalised/rescaled to exact target shares
+  in the energy domain at mixing time. Licence: CC BY 4.0.
 
 ## What is built (2026-11-01, real-vessel iteration)
 

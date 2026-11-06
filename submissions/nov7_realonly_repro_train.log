@@ -1,0 +1,30 @@
+loading real-only (hms_clip) data...
+train (5797, 15, 25) (real-only)  val (378, 15, 25) (real-only)
+featurizing...
+featurizing test...
+--- seed 7 (600 rounds) ---
+  seed 7 real-only val 1-RMSE=0.9231
+--- seed 11 (600 rounds) ---
+  seed 11 real-only val 1-RMSE=0.9215
+--- seed 13 (600 rounds) ---
+  seed 13 real-only val 1-RMSE=0.9239
+--- seed 17 (600 rounds) ---
+  seed 17 real-only val 1-RMSE=0.9216
+--- seed 19 (600 rounds) ---
+  seed 19 real-only val 1-RMSE=0.9211
+--- seed 23 (600 rounds) ---
+  seed 23 real-only val 1-RMSE=0.9226
+--- seed 29 (600 rounds) ---
+  seed 29 real-only val 1-RMSE=0.9206
+--- seed 31 (600 rounds) ---
+  seed 31 real-only val 1-RMSE=0.9227
+--- seed 37 (600 rounds) ---
+  seed 37 real-only val 1-RMSE=0.9210
+--- seed 41 (600 rounds) ---
+  seed 41 real-only val 1-RMSE=0.9209
+ENSEMBLE real-only val 1-RMSE=0.9229
+ENSEMBLE full-synthetic val 1-RMSE=0.9139 (for reference)
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_realonly_repro.csv
+test share: mean=0.2564 p50=0.2078 max=0.7925 frac<0.05=0.158
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_realonly_repro_results.txt
+done

@@ -1,4 +1,9 @@
 # Raw vessel audio is too large for git; the derived signatures are committed.
 data/external/hearmyship/
+data/external/vtuad/wav/
+data/external/vtuad/*.zip
+data/external/vtuad/*.part01
+data/external/vtuad/*.part02
+data/external/vtuad/*.part03
 __pycache__/
 *.pyc

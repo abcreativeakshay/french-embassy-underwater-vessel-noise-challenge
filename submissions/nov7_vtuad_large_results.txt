@@ -1,0 +1,12 @@
+suffix=_large
+n_train_hms=5797 n_train_vtuad=9000
+n_val_hms=378 n_val_vtuad=543
+seeds=[7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+rounds=600
+ensemble_combined_val_1rmse=0.9073
+ensemble_hms_only_val_1rmse=0.9170
+ensemble_vtuad_only_val_1rmse=0.9010
+baseline_hms_val_1rmse=0.9229
+gate_pass=False
+features=30 (same as real-only baseline; NO absolute-level features)
+calibration=none

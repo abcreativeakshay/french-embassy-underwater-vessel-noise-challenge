@@ -1,0 +1,13 @@
+487 vessel clips (label != background)
+  50 clips done
+  100 clips done
+  150 clips done
+  200 clips done
+  250 clips done
+  300 clips done
+  350 clips done
+  400 clips done
+  450 clips done
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/data/external/vtuad_signatures.npz (487, 60, 25) band_tot (487, 25)
+labels: {'tug': 188, 'cargo': 97, 'passengership': 71, 'other': 40, 'fishing': 34, 'pleasurecraft': 32, 'dredger': 8, 'sailing': 6, 'tanker': 5, 'rescue': 4, 'pilotvessel': 2}
+lengths: large-vessel mean=148.7 m min=0 max=348

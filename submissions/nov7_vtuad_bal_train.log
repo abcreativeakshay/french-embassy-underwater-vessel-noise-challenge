@@ -1,0 +1,42 @@
+loading hms_clip + vtuad data...
+capped vtuad train rows to 2000
+train hms=5797 vtuad=2000 total=7797
+val   hms=378 vtuad=543 total=921
+featurizing...
+--- seed 7 (600 rounds) ---
+  seed 7 combined val 1-RMSE=0.9032  hms-only=0.9183
+--- seed 11 (600 rounds) ---
+  seed 11 combined val 1-RMSE=0.9032  hms-only=0.9168
+--- seed 13 (600 rounds) ---
+  seed 13 combined val 1-RMSE=0.9027  hms-only=0.9162
+--- seed 17 (600 rounds) ---
+  seed 17 combined val 1-RMSE=0.9009  hms-only=0.9155
+--- seed 19 (600 rounds) ---
+  seed 19 combined val 1-RMSE=0.9026  hms-only=0.9159
+--- seed 23 (600 rounds) ---
+  seed 23 combined val 1-RMSE=0.9036  hms-only=0.9166
+--- seed 29 (600 rounds) ---
+  seed 29 combined val 1-RMSE=0.9032  hms-only=0.9174
+--- seed 31 (600 rounds) ---
+  seed 31 combined val 1-RMSE=0.9021  hms-only=0.9153
+--- seed 37 (600 rounds) ---
+  seed 37 combined val 1-RMSE=0.9017  hms-only=0.9161
+--- seed 41 (600 rounds) ---
+  seed 41 combined val 1-RMSE=0.9005  hms-only=0.9131
+ENSEMBLE combined val 1-RMSE=0.9031
+ENSEMBLE hms-only val 1-RMSE=0.9170  (baseline 0.9229)
+ENSEMBLE vtuad-only val 1-RMSE=0.8946
+  09_Fish_Hoek: n=506 1-RMSE=0.8836 mean_abs_err=0.0736
+  10_Sea_Point: n=415 1-RMSE=0.9343 mean_abs_err=0.0359
+  share[0.00,0.00): n= 247 rmse=0.0986 bias=+0.0469
+  share[0.00,0.10): n=  57 rmse=0.1027 bias=+0.0271
+  share[0.10,0.30): n= 158 rmse=0.0989 bias=+0.0032
+  share[0.30,0.60): n= 228 rmse=0.0882 bias=-0.0246
+  share[0.60,1.00): n= 231 rmse=0.1003 bias=-0.0446
+GATE (hms-only val >= 0.9229): FAIL
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_vtuad_large_bal.csv
+test share: mean=0.2707 p50=0.2230 max=0.8272 frac<0.05=0.151
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_vtuad_large_bal_blend.csv
+blend test share: mean=0.2642 corr vs best=0.9866 mean|diff|= 0.0241
+wrote /home/hatch/workspace/zindi-vessel-noise-challenge/submissions/nov7_vtuad_large_bal_results.txt
+done
